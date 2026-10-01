@@ -5,6 +5,7 @@ from flask import redirect
 import csv
 import os
 from datetime import datetime
+
 def carregar_solicitacoes():
 solicitacoes = []
 if os.path.exists(ARQUIVO):
@@ -14,6 +15,7 @@ ARQUIVO, "r", newline="", encoding="utf-8"
 leitor = csv.DictReader(arquivo)
 solicitacoes.extend(leitor)
 return solicitacoes
+
 def salvar_solicitacoes(solicitacoes):
 with open(
 ARQUIVO, "w", newline="", encoding="utf-8"
@@ -23,3 +25,11 @@ arquivo, fieldnames=CAMPOS
 )
 escritor.writeheader()
 escritor.writerows(solicitacoes)
+
+@app.route("/")
+def inicio():
+solicitacoes = carregar_solicitacoes()
+return render_template(
+"index.html",
+solicitacoes=solicitacoes
+)
