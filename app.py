@@ -14,3 +14,12 @@ ARQUIVO, "r", newline="", encoding="utf-8"
 leitor = csv.DictReader(arquivo)
 solicitacoes.extend(leitor)
 return solicitacoes
+def salvar_solicitacoes(solicitacoes):
+with open(
+ARQUIVO, "w", newline="", encoding="utf-8"
+) as arquivo:
+escritor = csv.DictWriter(
+arquivo, fieldnames=CAMPOS
+)
+escritor.writeheader()
+escritor.writerows(solicitacoes)
