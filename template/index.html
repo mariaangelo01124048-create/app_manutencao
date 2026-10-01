@@ -1,21 +1,138 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title> Sistema Escolar de Manutenção</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>App de Solicitação de Manutenção</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-<header>
-<h1>App de Solicitação de Manutenção</h1>
-<p>
-Registre problemas encontrados nas salas e laboratórios.
-</p>
-</header>
-<main>
-</main>
+
+    <header class="cabecalho">
+        <h1>Solicitação de Manutenção</h1>
+        <p>Cadastre e acompanhe os chamados de manutenção.</p>
+    </header>
+
+    <main class="container">
+
+        <section class="cartao">
+            <h2>Nova solicitação</h2>
+
+            <form action="/cadastrar" method="POST">
+
+                <label for="nome">Nome do solicitante</label>
+                <input type="text" id="nome" name="nome" required>
+
+                <label for="tipo_usuario">Tipo de usuário</label>
+                <select id="tipo_usuario" name="tipo_usuario" required>
+                    <option value="">Selecione</option>
+                    <option value="Aluno">Aluno</option>
+                    <option value="Professor">Professor</option>
+                </select>
+
+                <label for="sala">Sala ou local</label>
+                <input type="text" id="sala" name="sala" required>
+
+                <label for="equipamento">Equipamento</label>
+                <select id="equipamento" name="equipamento" required>
+                    <option value="">Selecione</option>
+                    <option value="Computador">Computador</option>
+                    <option value="Notebook">Notebook</option>
+                    <option value="Impressora">Impressora</option>
+                    <option value="Projetor">Projetor</option>
+                    <option value="Outro">Outro</option>
+                </select>
+
+                <label for="descricao">Descrição do problema</label>
+                <textarea id="descricao"
+                          name="descricao"
+                          rows="4"
+                          required></textarea>
+
+                <button type="submit" class="botao">
+                    Cadastrar solicitação
+                </button>
+
+            </form>
+        </section>
+
+        <section class="cartao">
+            <h2>Solicitações cadastradas</h2>
+
+            <div class="tabela-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>Tipo</th>
+                            <th>Sala</th>
+                            <th>Equipamento</th>
+                            <th>Descrição</th>
+                            <th>Data e hora</th>
+                            <th>Status</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for solicitacao in solicitacoes %}
+                        <tr>
+                            <td>{{ solicitacao.id }}</td>
+                            <td>{{ solicitacao.nome }}</td>
+                            <td>{{ solicitacao.tipo_usuario }}</td>
+                            <td>{{ solicitacao.sala }}</td>
+                            <td>{{ solicitacao.equipamento }}</td>
+                            <td>{{ solicitacao.descricao }}</td>
+                            <td>{{ solicitacao.data }}</td>
+
+                            <td>
+                                {% if solicitacao.status == "Concluído" %}
+                                    <span class="status concluido">
+                                        Concluído
+                                    </span>
+                                {% else %}
+                                    <span class="status pendente">
+                                        Pendente
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if solicitacao.status != "Concluído" %}
+                                    <a class="botao-concluir"
+                                       href="{{ url_for('concluir', id_solicitacao=solicitacao.id) }}">
+                                        Concluir
+                                    </a>
+                                {% else %}
+                                    <span class="finalizada">
+                                        Finalizada
+                                    </span>
+                                {% endif %}
+                            </td>
+                        </tr>
+
+                        {% else %}
+                        <tr>
+                            <td colspan="9" class="vazio">
+                                Nenhuma solicitação cadastrada.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>App de Solicitação de Manutenção</p>
+    </footer>
+
 </body>
 </html>
-
-@app.route("/cadastrar", methods=["POST"])
